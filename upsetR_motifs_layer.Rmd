@@ -1,0 +1,269 @@
+---
+title: "UpSetR motif Enh DAR DMRs intersection within each Layer: show how similar they are"
+output:
+  word_document: default
+  html_notebook: default
+---
+
+  -We are checking if Enh DAR DMR motifs are lineage-specific within laeyr, e.g. contain mostly different between each other motifs and most similar within any Layer
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+library(tidyr)
+library(ggpubr)
+library("readxl")
+library(datasets)  
+library(UpSetR)
+library(VennDiagram)
+library(repurrrsive) #for list length
+
+```
+-read motifs Excel files: Enh DMR DAR
+
+-read motifs  Enhs
+
+```{r}
+#-----------------Enhancers weis
+
+#read_excel("C:/Users/ia1/Documents/irina_docs/EpiGeVar/MayJune2020_egv/DARs_Carine/wei_ecto.xlsx")->motifs_EnhancerEc1
+#motifs_EnhancerEc1
+
+read_excel("data_motifs_Carine/wei_ecto.xlsx")->motifs_EnhancerEc1
+motifs_EnhancerEc1
+
+read_excel("data_motifs_Carine/wei_endo.xlsx")->motifs_EnhancerEn1
+#motifs_EnhancerMes1
+
+read_excel("data_motifs_Carine/wei_meso.xlsx")->motifs_EnhancerMes1
+#motifs_EnhancerMes1
+
+
+```
+
+
+-read motifs  DMR
+
+```{r}
+#-----------------DMRs 
+
+read_excel("data_motifs_Carine/wei_ecto.xlsx")->motifs_DMREc1
+#motifs_DMRMes1
+
+read_excel("data_motifs_Carine/wei_endo.xlsx")->motifs_DMREn1
+#motifs_DMRMes1
+
+read_excel("data_motifs_Carine/wei_meso.xlsx")->motifs_DMRMes1
+#motifs_DMRMes1
+
+```
+-read motifs DARs
+```{r}
+
+read_excel("data_motifs_Carine/DAR_ecto.xlsx")->motifs_DAREc1
+
+read_excel("data_motifs_Carine/DAR_endo.xlsx")->motifs_DAREn1
+#motifs_DARMes
+
+
+read_excel("data_motifs_Carine/DAR_meso.xlsx")->motifs_DARMes1
+#motifs_DARMes1
+
+```
+-B. set quantile thresholds for each Layer regions
+
+-B.DMR   quantiles DMR
+```{r}
+quantile(motifs_DMREc1$P)->q_dmr_ec
+quantile(motifs_DMREn1$P)->q_dmr_en
+quantile(motifs_DMRMes1$P)->q_dmr_m
+q_dmr_ec
+q_dmr_en
+q_dmr_m
+
+```
+
+-set thr DMR,  quantiles Q75%
+```{r}
+thrPe_ec2<-q_dmr_ec[4]
+thrPe_en2<-q_dmr_en[3]# to make a little smaller
+thrPe_m2<-q_dmr_m[4]
+
+```
+-make individual lists for DMRs: get the functions
+
+```{r}
+source("make_filterP_list_dmrEc.R")
+source("make_filterP_list_dmrEn.R")
+source("make_filterP_list_dmrM.R")
+```
+- upsetR plot DMRs
+-how similar dmr motifs are bw layers, thrP quantile
+
+```{r}
+#-----------------------Q75 thr
+
+vdmrec2<-make_filterP_list_dmrEc(motifs_DMREc1,thrPe_ec2)
+#library(repurrrsive)
+vdmrec2%>%
+map(length)
+#typeof(vdmrec)
+
+vdmren2<-make_filterP_list_dmrEn(motifs_DMREn1,thrPe_en2)
+vdmren2%>%
+map(length)
+
+vdmrm2<-make_filterP_list_dmrM(motifs_DMRMes1,thrPe_m2)
+vdmrm2%>%
+map(length)
+```
+- upsetR plot DMRs
+-how similar dmr motifs are bw layers, thrP quantile
+```{r}
+listik_dmr_EcEnM2=c(vdmrec2,vdmren2,vdmrm2)
+upset(fromList(listik_dmr_EcEnM2),empty.intersections = "on")
+#----------list of motifs
+#vdmrec2
+#vdmren2
+
+
+```
+
+-B.DAR   quantiles DAR
+```{r}
+quantile(motifs_DAREc1$P)->q_dar_ec
+quantile(motifs_DAREn1$P)->q_dar_en
+quantile(motifs_DARMes1$P)->q_dar_m
+q_dar_ec
+q_dar_en
+q_dar_m
+
+```
+
+-set thr DAR,  quantiles Q25%
+```{r}
+thrPe_ec2<-q_dar_ec[2]
+thrPe_en2<-q_dar_en[2]# to make a little smaller
+thrPe_m2<-q_dar_m[2]
+
+```
+-make individual lists for DARs: get the functions
+
+```{r}
+source("make_filterP_list_darEc.R")
+source("make_filterP_list_darEn.R")
+source("make_filterP_list_darM.R")
+
+```
+- upsetR plot DARs
+-how similar dmr motifs are bw layers, thrP quantile
+
+```{r}
+#-----------------------Q75 thr
+
+vdarec2<-make_filterP_list_darEc(motifs_DAREc1,thrPe_ec2)
+#library(repurrrsive)
+vdarec2%>%
+map(length)
+#typeof(vdarec)
+
+vdaren2<-make_filterP_list_darEn(motifs_DAREn1,thrPe_en2)
+vdaren2%>%
+map(length)
+
+vdarm2<-make_filterP_list_darM(motifs_DARMes1,thrPe_m2)
+vdarm2%>%
+map(length)
+```
+- upsetR plot DARs
+-how similar dar motifs are bw layers, thrP quantile
+```{r}
+#---------------------should be different mostly
+listik_dar_EcEnM2=c(vdarec2,vdaren2,vdarm2)
+upset(fromList(listik_dar_EcEnM2),empty.intersections = "on")
+
+```
+-B.Wei Enhancers
+
+-quantiles Wei
+```{r}
+quantile(motifs_EnhancerEc1$P)->q_w_ec
+quantile(motifs_EnhancerEn1$P)->q_w_en
+quantile(motifs_EnhancerMes1$P)->q_w_m
+q_w_ec
+q_w_en
+q_w_m
+
+```
+- change thr, quantiles Q75% Wei
+```{r}
+thrPe_ec2<-q_w_ec[4]
+thrPe_en2<-q_w_en[3]# to make a little smaller
+thrPe_m2<-q_w_m[4]
+
+```
+
+-make ind lists for Enhancers Wei
+```{r}
+source("make_filterP_list_enhEc.R")
+source("make_filterP_list_enhEn.R")
+source("make_filterP_list_enhM.R")
+```
+
+-quntile P-threshold Wei
+
+```{r}
+#-----------------------Q75 thr Wei
+
+vwec2<-make_filterP_list_enhEc(motifs_EnhancerEc1,thrPe_ec2)
+#library(repurrrsive)
+vwec2%>%
+map(length)
+#typeof(vwec)
+
+vwen2<-make_filterP_list_enhEn(motifs_EnhancerEn1,thrPe_en2)
+vwen2%>%
+map(length)
+
+vwm2<-make_filterP_list_enhM(motifs_EnhancerMes1,thrPe_m2)
+vwm2%>%
+map(length)
+```
+
+-Ectoderm: Enh DAR DMR regions
+
+```{r}
+listik_w_dar_dmr_Ec2=c(vwec2,vdarec2,vdmrec2)
+upset(fromList(listik_w_dar_dmr_Ec2),empty.intersections = "on")
+```
+-get elements Ectoderm
+```{r}
+overlapEct<-calculate.overlap(listik_w_dar_dmr_Ec2)
+#overlapEct
+```
+
+
+-Mesoderm: intersection of Enh DAR DMR
+```{r}
+listik_w_dar_dmr_M2=c(vwm2,vdarm2,vdmrm2)
+upset(fromList(listik_w_dar_dmr_M2),empty.intersections = "on")
+```
+-get upset elements Mesoderm: inresect, distinct, paiwise
+```{r}
+overlapMes<-calculate.overlap(listik_w_dar_dmr_M2)
+#overlapMes
+```
+
+
+-Endoderm within: intersection of Enh DAR DMR
+
+```{r}
+listik_w_dar_dmr_En2=c(vwen2,vdaren2,vdmren2)
+upset(fromList(listik_w_dar_dmr_En2),empty.intersections = "on")
+```
+-get elements Endoderm
+```{r}
+overlapEnd<-calculate.overlap(listik_w_dar_dmr_En2)
+#overlapEnd
+```
