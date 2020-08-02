@@ -1,5 +1,5 @@
 ---
-title: "UpSetR motif Enh DAR DMRs intersection within each Layer: show how similar they are"
+title: "Linage-specific motifs by the UpSetR. We find Enh DAR DMRs intersection of motifs within each Layer: show how similar motifs are for regions of the same lineage, and how different they are between lineages"
 output:
   word_document: default
   html_notebook: default
