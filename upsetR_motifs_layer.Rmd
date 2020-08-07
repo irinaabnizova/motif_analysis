@@ -20,9 +20,9 @@ library(VennDiagram)
 library(repurrrsive) #for list length
 
 ```
--read motifs Excel files: Enh DMR DAR
+-read motifs Excel files: Enhancers, DMRs, DARs
 
--read motifs  Enhs
+-read motifs  Enhancers
 
 ```{r}
 #-----------------Enhancers weis
@@ -43,7 +43,7 @@ read_excel("data_motifs_Carine/wei_meso.xlsx")->motifs_EnhancerMes1
 ```
 
 
--read motifs  DMR
+-read motifs  in DMRs
 
 ```{r}
 #-----------------DMRs 
@@ -58,7 +58,8 @@ read_excel("data_motifs_Carine/wei_meso.xlsx")->motifs_DMRMes1
 #motifs_DMRMes1
 
 ```
--read motifs DARs
+-read motifs in DARs
+
 ```{r}
 
 read_excel("data_motifs_Carine/DAR_ecto.xlsx")->motifs_DAREc1
@@ -91,7 +92,7 @@ thrPe_en2<-q_dmr_en[3]# to make a little smaller
 thrPe_m2<-q_dmr_m[4]
 
 ```
--make individual lists for DMRs: get the functions
+-make individual motif lists for DMRs: get the functions first
 
 ```{r}
 source("make_filterP_list_dmrEc.R")
